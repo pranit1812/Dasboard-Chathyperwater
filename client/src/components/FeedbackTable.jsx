@@ -125,11 +125,11 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {
       case 'up':
-        return 'bg-green-500/10 text-green-500';
+        return 'bg-green-500/20 text-green-500';
       case 'down':
-        return 'bg-red-500/10 text-red-500';
+        return 'bg-red-500/20 text-red-500';
       case 'comment':
-        return 'bg-yellow-500/10 text-yellow-500';
+        return 'bg-yellow-500/20 text-yellow-500';
       default:
         return 'bg-light-gray/10 text-light-gray';
     }
@@ -139,18 +139,18 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
   const getSentimentEmoji = (sentiment) => {
     switch (sentiment) {
       case 'up':
-        return '👍';
+        return '😊';
       case 'down':
-        return '👎';
+        return '😞';
       case 'comment':
-        return '💬';
+        return '🤔';
       default:
         return '❓';
     }
   };
 
-  // Helper function to get sentiment label (for screen readers and tooltips)
-  const getSentimentLabel = (sentiment) => {
+  // Helper function to get sentiment tooltip
+  const getSentimentTooltip = (sentiment) => {
     switch (sentiment) {
       case 'up':
         return 'Thumbs Up';
@@ -297,8 +297,8 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                     <td className="px-4 py-3">{feedback.projectName}</td>
                     <td className="px-4 py-3">
                       <span 
-                        className={`inline-flex items-center justify-center rounded-full w-8 h-8 ${getSentimentColor(feedback.sentiment)}`}
-                        title={getSentimentLabel(feedback.sentiment)}
+                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${getSentimentColor(feedback.sentiment)}`}
+                        title={getSentimentTooltip(feedback.sentiment)}
                       >
                         <span className="text-lg">{getSentimentEmoji(feedback.sentiment)}</span>
                       </span>
