@@ -1,0 +1,94 @@
+// api/feedback.js - Serverless API for handling feedback with DynamoDB
+const AWS = require('aws-sdk');
+
+// Configure AWS SDK
+const dynamoDB = new AWS.DynamoDB.DocumentClient({
+  region: process.env.AWS_REGION || 'us-east-1',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const TABLE_NAME = 'feedback';
+
+module.exports = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle OPTIONS request (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  try {
+    // GET request - retrieve feedback with optional filters
+    if (req.method === 'GET') {
+      const { projectName, sentiment, searchMethod, searchText } = req.query;
+      
+      // Start with basic params
+      const params = {
+        TableName: TABLE_NAME
+      };
+      
+      // Apply filters if needed (would need to use FilterExpression for more complex filtering)
+      // Note: This is a simplified example. For production, you would implement more efficient querying
+      const { Items } = await dynamoDB.scan(params).promise();
+      
+      // Apply filters in memory (for simplicity)
+      let filteredItems = Items || [];
+      
+      if (projectName) {
+        filteredItems = filteredItems.filter(item => item.projectName === projectName);
+      }
+      
+      if (sentiment) {
+        filteredItems = filteredItems.filter(item => item.sentiment === sentiment);
+      }
+      
+      if (searchMethod) {
+        filteredItems = filteredItems.filter(item => item.searchMethod === searchMethod);
+      }
+      
+      if (searchText) {
+        const searchLower = searchText.toLowerCase();
+        filteredItems = filteredItems.filter(item => 
+          (item.query && item.query.toLowerCase().includes(searchLower)) || 
+          (item.answer && item.answer.toLowerCase().includes(searchLower)) ||
+          (item.commentText && item.commentText.toLowerCase().includes(searchLower))
+        );
+      }
+      
+      return res.status(200).json(filteredItems);
+    }
+    
+    // POST request - add new feedback
+    if (req.method === 'POST') {
+      const feedback = req.body;
+      
+      // Validate required fields
+      if (!feedback.id || !feedback.projectName || !feedback.sentiment) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: id, projectName, sentiment' 
+        });
+      }
+      
+      // Store in DynamoDB
+      const params = {
+        TableName: TABLE_NAME,
+        Item: feedback
+      };
+      
+      await dynamoDB.put(params).promise();
+      
+      return res.status(201).json({ success: true });
+    }
+    
+    // Method not allowed
+    return res.status(405).json({ error: 'Method not allowed' });
+    
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}; 

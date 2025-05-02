@@ -4,6 +4,10 @@ import SentimentChart from './components/SentimentChart';
 import FilterControls from './components/FilterControls';
 import Layout from './components/Layout';
 import { mockApi } from './api/mockApi';
+import { realApi } from './api/realApi';
+
+// Choose which API to use - mockApi for local storage or realApi for DynamoDB
+const api = import.meta.env.PROD ? realApi : mockApi;
 
 function App() {
   const [feedbackData, setFeedbackData] = useState([]);
@@ -30,10 +34,10 @@ function App() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      console.log('Fetching data from mock API');
+      console.log('Fetching data from API');
       
-      // Get data directly from mockApi
-      const data = await mockApi.getFeedback();
+      // Get data from the API (mock or real)
+      const data = await api.getFeedback();
       console.log('API response:', data);
       
       if (Array.isArray(data)) {
@@ -61,8 +65,8 @@ function App() {
     const applyFilters = async () => {
       try {
         setLoading(true);
-        // Use the mockApi to filter data
-        const filtered = await mockApi.getFeedback(filters);
+        // Use the API to filter data
+        const filtered = await api.getFeedback(filters);
         setFilteredData(filtered);
       } catch (err) {
         console.error('Error applying filters:', err);

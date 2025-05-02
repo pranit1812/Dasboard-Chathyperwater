@@ -20,6 +20,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1466.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

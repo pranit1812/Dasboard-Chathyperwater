@@ -9,13 +9,15 @@ A modern dashboard application for visualizing user feedback data with filtering
 - Search through feedback content with text search
 - Visualize sentiment distribution with a pie chart
 - Responsive design that works on desktop and mobile
+- DynamoDB integration for persistent data storage
 
 ## Technologies Used
 
 - React with Vite for frontend
 - Tailwind CSS for styling
 - Chart.js for data visualization
-- Client-side data management with localStorage
+- AWS DynamoDB for data storage
+- Vercel serverless functions for API
 
 ## Getting Started
 
@@ -23,6 +25,7 @@ A modern dashboard application for visualizing user feedback data with filtering
 
 - Node.js (v14+)
 - npm or yarn
+- AWS account (for DynamoDB)
 
 ### Local Development
 
@@ -42,6 +45,24 @@ A modern dashboard application for visualizing user feedback data with filtering
    ```
 
 4. Open your browser to `http://localhost:5173`
+
+## DynamoDB Setup
+
+1. Create a DynamoDB table named `feedback` in your AWS account with the following schema:
+   - Partition key: `id` (String)
+
+2. Create a user with programmatic access and the following permissions:
+   - `dynamodb:GetItem`
+   - `dynamodb:PutItem`
+   - `dynamodb:Scan`
+   - `dynamodb:Query`
+   - `dynamodb:UpdateItem`
+   - `dynamodb:DeleteItem`
+
+3. Set the following environment variables in your Vercel project:
+   - `AWS_REGION`: The AWS region where your DynamoDB table is located (e.g., 'us-east-1')
+   - `AWS_ACCESS_KEY_ID`: Your AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
 
 ## Deployment to Vercel
 
@@ -75,19 +96,54 @@ This script will:
    vercel --prod
    ```
 
+## API Usage
+
+### GET Feedback
+`GET /api/feedback`
+
+Optional query parameters:
+- `projectName`: Filter by project name
+- `sentiment`: Filter by sentiment ("up", "down", "comment")
+- `searchMethod`: Filter by search method
+- `searchText`: Search by content
+
+### POST Feedback
+`POST /api/feedback`
+
+Request body:
+```json
+{
+  "id": "resp-123",
+  "projectName": "Project Name",
+  "query": "How do I implement feature X?",
+  "answer": "You can use...",
+  "sentiment": "up",
+  "user.id": "user-001",
+  "user.email": "user@example.com",
+  "searchMethod": "local",
+  "commentText": "Great response!"
+}
+```
+
+Required fields:
+- `id`: Unique identifier
+- `projectName`: Project name
+- `sentiment`: One of "up", "down", or "comment"
+
 ## Project Structure
 
 - `client/` - Frontend React application
   - `src/components/` - React components
   - `src/api/` - API client and mock implementation
   - `src/assets/` - Static assets
+- `api/` - Serverless API functions
+  - `feedback.js` - DynamoDB integration
 - `public/` - Public static files
 
 ## Customization
 
-The dashboard uses a client-side mock API that loads initial demo data. To customize:
-
-1. Edit the `initialData` array in `client/src/api/mockApi.js`
+To customize:
+1. Edit the initial data in `client/src/api/mockApi.js` (for local development)
 2. Modify the color scheme in the Tailwind configuration
 
 ## ✅ Completed Features

@@ -1,0 +1,9 @@
+{
+  "name": "feedback-dashboard-api",
+  "version": "1.0.0",
+  "description": "API functions for the Feedback Dashboard",
+  "main": "feedback.js",
+  "dependencies": {
+    "aws-sdk": "^2.1466.0"
+  }
+} 
