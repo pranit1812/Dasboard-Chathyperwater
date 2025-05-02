@@ -56,5 +56,29 @@ export const realApi = {
       console.error('Error adding feedback:', error);
       throw error.response?.data?.error || error.message || 'Failed to add feedback';
     }
+  },
+  
+  // Delete feedback
+  async deleteFeedback(id) {
+    try {
+      // Make API call
+      const response = await axios.delete(`${API_BASE_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      throw error.response?.data?.error || error.message || 'Failed to delete feedback';
+    }
+  },
+  
+  // Update engineer feedback
+  async updateEngineerFeedback(id, feedback) {
+    try {
+      // Make API call
+      const response = await axios.patch(`${API_BASE_URL}/${id}`, { engineerFeedback: feedback });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating engineer feedback:', error);
+      throw error.response?.data?.error || error.message || 'Failed to update engineer feedback';
+    }
   }
 }; 

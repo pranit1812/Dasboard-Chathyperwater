@@ -62,6 +62,61 @@ export default function handler(req, res) {
     return res.status(201).json({ success: true });
   }
 
+  // Handle DELETE request - Delete feedback
+  if (req.method === 'DELETE') {
+    const id = req.url.split('/').pop();
+    
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing feedback id'
+      });
+    }
+    
+    const index = feedbackStore.findIndex(item => item.id === id);
+    
+    if (index === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Feedback not found'
+      });
+    }
+    
+    // Remove from store
+    feedbackStore.splice(index, 1);
+    
+    return res.status(200).json({ success: true });
+  }
+
+  // Handle PATCH request - Update feedback
+  if (req.method === 'PATCH') {
+    const id = req.url.split('/').pop();
+    
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing feedback id'
+      });
+    }
+    
+    const index = feedbackStore.findIndex(item => item.id === id);
+    
+    if (index === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Feedback not found'
+      });
+    }
+    
+    // Update the feedback
+    feedbackStore[index] = {
+      ...feedbackStore[index],
+      ...req.body
+    };
+    
+    return res.status(200).json({ success: true });
+  }
+
   // Handle unsupported methods
   return res.status(405).json({ error: 'Method not allowed' });
 } 

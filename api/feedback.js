@@ -13,7 +13,7 @@ const TABLE_NAME = 'feedback';
 module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   // Handle OPTIONS request (preflight)
@@ -52,11 +52,16 @@ module.exports = async (req, res) => {
       
       if (searchText) {
         const searchLower = searchText.toLowerCase();
-        filteredItems = filteredItems.filter(item => 
-          (item.query && item.query.toLowerCase().includes(searchLower)) || 
-          (item.answer && item.answer.toLowerCase().includes(searchLower)) ||
-          (item.commentText && item.commentText.toLowerCase().includes(searchLower))
-        );
+        filteredItems = filteredItems.filter(item => {
+          // Check all string fields in the item for the search text
+          return Object.values(item).some(value => {
+            // Only search string values
+            if (typeof value === 'string') {
+              return value.toLowerCase().includes(searchLower);
+            }
+            return false;
+          });
+        });
       }
       
       return res.status(200).json(filteredItems);
@@ -83,12 +88,73 @@ module.exports = async (req, res) => {
       
       return res.status(201).json({ success: true });
     }
+
+    // DELETE request - delete feedback
+    if (req.method === 'DELETE') {
+      const id = req.url.split('/').pop();
+      
+      if (!id) {
+        return res.status(400).json({
+          error: 'Missing feedback id'
+        });
+      }
+      
+      // Delete from DynamoDB
+      const params = {
+        TableName: TABLE_NAME,
+        Key: { id }
+      };
+      
+      await dynamoDB.delete(params).promise();
+      
+      return res.status(200).json({ success: true });
+    }
+
+    // PATCH request - update feedback
+    if (req.method === 'PATCH') {
+      const id = req.url.split('/').pop();
+      const updates = req.body;
+      
+      if (!id) {
+        return res.status(400).json({
+          error: 'Missing feedback id'
+        });
+      }
+      
+      // Build update expression
+      let updateExpression = 'set';
+      let expressionAttributeNames = {};
+      let expressionAttributeValues = {};
+      
+      for (const [key, value] of Object.entries(updates)) {
+        updateExpression += ` #${key} = :${key},`;
+        expressionAttributeNames[`#${key}`] = key;
+        expressionAttributeValues[`:${key}`] = value;
+      }
+      
+      // Remove trailing comma
+      updateExpression = updateExpression.slice(0, -1);
+      
+      // Update in DynamoDB
+      const params = {
+        TableName: TABLE_NAME,
+        Key: { id },
+        UpdateExpression: updateExpression,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: 'UPDATED_NEW'
+      };
+      
+      await dynamoDB.update(params).promise();
+      
+      return res.status(200).json({ success: true });
+    }
     
-    // Method not allowed
+    // Handle unsupported methods
     return res.status(405).json({ error: 'Method not allowed' });
     
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error('API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }; 

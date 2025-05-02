@@ -99,6 +99,81 @@ export default defineConfig({
             return
           }
           
+          // Handle DELETE /api/feedback/:id
+          if (req.url.startsWith('/api/feedback/') && req.method === 'DELETE') {
+            const id = req.url.split('/').pop()
+            
+            // Find index of item to delete
+            const index = feedbackStore.findIndex(item => item.id === id)
+            
+            if (index === -1) {
+              res.statusCode = 404
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({
+                success: false,
+                message: 'Feedback not found'
+              }))
+              return
+            }
+            
+            // Remove from store
+            feedbackStore.splice(index, 1)
+            
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ success: true }))
+            return
+          }
+          
+          // Handle PATCH /api/feedback/:id
+          if (req.url.startsWith('/api/feedback/') && req.method === 'PATCH') {
+            const id = req.url.split('/').pop()
+            
+            // Find index of item to update
+            const index = feedbackStore.findIndex(item => item.id === id)
+            
+            if (index === -1) {
+              res.statusCode = 404
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({
+                success: false,
+                message: 'Feedback not found'
+              }))
+              return
+            }
+            
+            let body = ''
+            
+            req.on('data', chunk => {
+              body += chunk.toString()
+            })
+            
+            req.on('end', () => {
+              try {
+                const updates = JSON.parse(body)
+                
+                // Update the feedback
+                feedbackStore[index] = {
+                  ...feedbackStore[index],
+                  ...updates
+                }
+                
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json')
+                res.end(JSON.stringify({ success: true }))
+              } catch {
+                res.statusCode = 400
+                res.setHeader('Content-Type', 'application/json')
+                res.end(JSON.stringify({
+                  success: false,
+                  message: 'Invalid JSON payload'
+                }))
+              }
+            })
+            
+            return
+          }
+          
           // Handle unknown API routes
           res.statusCode = 404
           res.setHeader('Content-Type', 'application/json')

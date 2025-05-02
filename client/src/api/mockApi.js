@@ -11,7 +11,8 @@ const initialData = [
     'user.id': 'user-001',
     'user.email': 'user1@example.com',
     searchMethod: 'local',
-    commentText: 'Great response!'
+    commentText: 'Great response!',
+    engineerFeedback: ''
   },
   {
     id: 'resp-002',
@@ -22,7 +23,8 @@ const initialData = [
     'user.id': 'user-002',
     'user.email': 'user2@example.com',
     searchMethod: 'api',
-    commentText: 'This didn\'t solve my problem'
+    commentText: 'This didn\'t solve my problem',
+    engineerFeedback: ''
   },
   {
     id: 'resp-003',
@@ -33,7 +35,8 @@ const initialData = [
     'user.id': 'user-003',
     'user.email': 'user3@example.com',
     searchMethod: 'local',
-    commentText: 'I need more details'
+    commentText: 'I need more details',
+    engineerFeedback: ''
   }
 ];
 
@@ -87,11 +90,16 @@ export const mockApi = {
     
     if (searchText) {
       const searchLower = searchText.toLowerCase();
-      filteredData = filteredData.filter(item => 
-        item.query?.toLowerCase().includes(searchLower) || 
-        item.answer?.toLowerCase().includes(searchLower) ||
-        item.commentText?.toLowerCase().includes(searchLower)
-      );
+      filteredData = filteredData.filter(item => {
+        // Check all string fields in the item for the search text
+        return Object.values(item).some(value => {
+          // Only search string values
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(searchLower);
+          }
+          return false;
+        });
+      });
     }
     
     return filteredData;
@@ -109,6 +117,44 @@ export const mockApi = {
     
     // Add to store
     feedbackStore.push(feedback);
+    saveData();
+    
+    return { success: true };
+  },
+
+  // Delete feedback
+  async deleteFeedback(id) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Find index of item to delete
+    const index = feedbackStore.findIndex(item => item.id === id);
+    
+    if (index === -1) {
+      throw new Error('Feedback not found');
+    }
+    
+    // Remove from store
+    feedbackStore.splice(index, 1);
+    saveData();
+    
+    return { success: true };
+  },
+  
+  // Update engineer feedback
+  async updateEngineerFeedback(id, feedback) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Find index of item to update
+    const index = feedbackStore.findIndex(item => item.id === id);
+    
+    if (index === -1) {
+      throw new Error('Feedback not found');
+    }
+    
+    // Update engineer feedback
+    feedbackStore[index].engineerFeedback = feedback;
     saveData();
     
     return { success: true };

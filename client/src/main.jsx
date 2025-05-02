@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (root) {
     ReactDOM.createRoot(root).render(
       <React.StrictMode>
-        <App />
+    <App />
       </React.StrictMode>
     );
   } else {

@@ -147,9 +147,12 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
             name="searchText"
             value={filters.searchText}
             onChange={handleInputChange}
-            placeholder="Search in queries and answers..."
+            placeholder="Search across all fields..."
             className="w-full rounded-md border-light-gray/20 bg-deep-navy text-light-gray p-2 focus:border-cyan focus:ring-1 focus:ring-cyan"
           />
+          <p className="text-xs text-light-gray/60 mt-1">
+            Searches in all data including feedback, answers, and comments
+          </p>
         </div>
       </div>
     </div>
