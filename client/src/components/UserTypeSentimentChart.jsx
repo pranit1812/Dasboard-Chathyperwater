@@ -1,21 +1,15 @@
 import React, { useMemo } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend
 } from 'chart.js';
 
 // Register Chart.js components
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend
 );
@@ -53,49 +47,60 @@ const UserTypeSentimentChart = ({ data }) => {
     }
   };
   
-  // Format chart data for Chart.js
-  const barChartData = {
-    labels: chartData.map(item => getUserTypeLabel(item.userType)),
-    datasets: [
-      {
-        label: 'Thumbs Up',
-        data: chartData.map(item => item.up),
-        backgroundColor: 'rgba(16, 185, 129, 0.6)',
-        borderColor: 'rgba(16, 185, 129, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Thumbs Down',
-        data: chartData.map(item => item.down),
-        backgroundColor: 'rgba(239, 68, 68, 0.6)',
-        borderColor: 'rgba(239, 68, 68, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Comments',
-        data: chartData.map(item => item.comment),
-        backgroundColor: 'rgba(59, 130, 246, 0.6)',
-        borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
-      },
-    ],
+  // Create pie chart data for each user type
+  const createPieData = (userTypeData) => {
+    const total = userTypeData.up + userTypeData.down + userTypeData.comment;
+    
+    // If there's no data, return empty data with a message
+    if (total === 0) {
+      return {
+        labels: ['No Data'],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: ['rgba(156, 163, 175, 0.6)'],
+            borderColor: ['rgba(156, 163, 175, 1)'],
+            borderWidth: 1,
+          }
+        ]
+      };
+    }
+
+    return {
+      labels: ['Thumbs Up', 'Thumbs Down', 'Comments'],
+      datasets: [
+        {
+          data: [userTypeData.up, userTypeData.down, userTypeData.comment],
+          backgroundColor: [
+            'rgba(16, 185, 129, 0.6)', // Green for thumbs up
+            'rgba(239, 68, 68, 0.6)',  // Red for thumbs down
+            'rgba(59, 130, 246, 0.6)'  // Blue for comments
+          ],
+          borderColor: [
+            'rgba(16, 185, 129, 1)',
+            'rgba(239, 68, 68, 1)',
+            'rgba(59, 130, 246, 1)'
+          ],
+          borderWidth: 1,
+        }
+      ]
+    };
   };
   
-  const options = {
+  const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
         labels: {
           color: '#a8b3cf', // Light gray text
           font: {
             family: "'Inter', sans-serif",
-          }
+            size: 12
+          },
+          padding: 15
         }
-      },
-      title: {
-        display: false
       },
       tooltip: {
         backgroundColor: 'rgba(15, 23, 42, 0.9)', // Deep navy with transparency
@@ -111,42 +116,41 @@ const UserTypeSentimentChart = ({ data }) => {
           size: 13
         },
         padding: 12,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const dataset = context.dataset.data;
+            const total = dataset.reduce((acc, data) => acc + data, 0);
+            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        },
         displayColors: true,
         borderColor: 'rgba(59, 130, 246, 0.3)',
         borderWidth: 1
       }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#a8b3cf',
-          font: {
-            family: "'Inter', sans-serif",
-          },
-        },
-        grid: {
-          display: false
-        }
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          precision: 0, // Only show whole numbers
-          color: '#a8b3cf',
-          font: {
-            family: "'Inter', sans-serif",
-          },
-        },
-        grid: {
-          color: 'rgba(168, 179, 207, 0.1)', // Very faint grid lines
-        }
-      },
-    },
+    }
   };
   
   return (
     <div className="w-full h-full">
-      <Bar data={barChartData} options={options} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {chartData.map((userTypeData) => (
+          <div key={userTypeData.userType} className="flex flex-col items-center">
+            <h3 className="text-lg font-medium text-cyan mb-2">{getUserTypeLabel(userTypeData.userType)}</h3>
+            <div className="h-52 w-full">
+              <Pie 
+                data={createPieData(userTypeData)} 
+                options={pieOptions} 
+              />
+            </div>
+            <div className="mt-2 text-light-gray text-sm text-center">
+              Total Feedback: {userTypeData.up + userTypeData.down + userTypeData.comment}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

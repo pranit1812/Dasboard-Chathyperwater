@@ -223,7 +223,7 @@ function App() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {/* Chart on the left with centered heading */}
                       <div className="flex flex-col">
-                        <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Distribution</h2>
+                        <h2 className="text-xl font-semibold text-cyan text-center mb-4">Collective Sentiment</h2>
                         <div className="flex justify-center items-center flex-grow">
                           <div className="w-72 h-72">
                             <SentimentChart data={filteredData} />
@@ -263,10 +263,10 @@ function App() {
                     </div>
                   </div>
                   
-                  {/* New user type sentiment chart */}
+                  {/* User type sentiment chart */}
                   <div className="bg-deep-navy/30 p-6 rounded-lg border border-light-gray/10">
                     <h2 className="text-xl font-semibold text-cyan text-center mb-6">Sentiment by User Type</h2>
-                    <div className="h-80">
+                    <div className="h-[400px]">
                       <UserTypeSentimentChart data={filteredData} />
                     </div>
                   </div>
