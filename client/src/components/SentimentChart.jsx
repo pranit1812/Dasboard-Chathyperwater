@@ -18,9 +18,9 @@ const SentimentChart = ({ data }) => {
   // Prepare chart data
   const chartData = {
     labels: [
-      'Up 👍', 
-      'Down 👎', 
-      'Comment 💬'
+      'Thumbs Up', 
+      'Thumbs Down', 
+      'Comment'
     ],
     datasets: [
       {

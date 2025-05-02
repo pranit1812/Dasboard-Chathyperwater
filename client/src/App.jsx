@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import FeedbackTable from './components/FeedbackTable';
 import SentimentChart from './components/SentimentChart';
+import UserTypeSentimentChart from './components/UserTypeSentimentChart';
 import FilterControls from './components/FilterControls';
 import Layout from './components/Layout';
 import Login from './components/Login';
@@ -215,47 +216,58 @@ function App() {
               
               {/* Sentiment distribution chart below the table - only show if we have data */}
               {filteredData.length > 0 && (
-                <div className="bg-deep-navy/30 p-6 rounded-lg border border-light-gray/10">
-                  {/* Main layout - chart on left, cards on right */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Chart on the left with centered heading */}
-                    <div className="flex flex-col">
-                      <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Distribution</h2>
-                      <div className="flex justify-center items-center flex-grow">
-                        <div className="w-72 h-72">
-                          <SentimentChart data={filteredData} />
+                <div className="space-y-8">
+                  {/* Original sentiment chart */}
+                  <div className="bg-deep-navy/30 p-6 rounded-lg border border-light-gray/10">
+                    {/* Main layout - chart on left, cards on right */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {/* Chart on the left with centered heading */}
+                      <div className="flex flex-col">
+                        <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Distribution</h2>
+                        <div className="flex justify-center items-center flex-grow">
+                          <div className="w-72 h-72">
+                            <SentimentChart data={filteredData} />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Sentiment breakdown on the right with centered heading */}
+                      <div className="flex flex-col justify-center">
+                        <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Breakdown</h2>
+                        <div className="flex flex-col space-y-4">
+                          <div className="flex items-center p-3 rounded bg-sentiment-up/10">
+                            <span className="text-2xl mr-3">😊</span>
+                            <div>
+                              <div className="text-sentiment-up font-semibold">{upCount} Thumbs Up</div>
+                              <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((upCount / totalCount) * 100) : 0}% of total</div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center p-3 rounded bg-sentiment-down/10">
+                            <span className="text-2xl mr-3">😞</span>
+                            <div>
+                              <div className="text-sentiment-down font-semibold">{downCount} Thumbs Down</div>
+                              <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((downCount / totalCount) * 100) : 0}% of total</div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center p-3 rounded bg-sentiment-comment/10">
+                            <span className="text-2xl mr-3">🤔</span>
+                            <div>
+                              <div className="text-sentiment-comment font-semibold">{commentCount} Comment</div>
+                              <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((commentCount / totalCount) * 100) : 0}% of total</div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    
-                    {/* Sentiment breakdown on the right with centered heading */}
-                    <div className="flex flex-col justify-center">
-                      <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Breakdown</h2>
-                      <div className="flex flex-col space-y-4">
-                        <div className="flex items-center p-3 rounded bg-green-500/10">
-                          <span className="text-2xl mr-3">👍</span>
-                          <div>
-                            <div className="text-green-500 font-semibold">{upCount} Thumbs Up</div>
-                            <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((upCount / totalCount) * 100) : 0}% of total</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center p-3 rounded bg-red-500/10">
-                          <span className="text-2xl mr-3">👎</span>
-                          <div>
-                            <div className="text-red-500 font-semibold">{downCount} Thumbs Down</div>
-                            <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((downCount / totalCount) * 100) : 0}% of total</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center p-3 rounded bg-yellow-500/10">
-                          <span className="text-2xl mr-3">💬</span>
-                          <div>
-                            <div className="text-yellow-500 font-semibold">{commentCount} Comment</div>
-                            <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((commentCount / totalCount) * 100) : 0}% of total</div>
-                          </div>
-                        </div>
-                      </div>
+                  </div>
+                  
+                  {/* New user type sentiment chart */}
+                  <div className="bg-deep-navy/30 p-6 rounded-lg border border-light-gray/10">
+                    <h2 className="text-xl font-semibold text-cyan text-center mb-6">Sentiment by User Type</h2>
+                    <div className="h-80">
+                      <UserTypeSentimentChart data={filteredData} />
                     </div>
                   </div>
                 </div>

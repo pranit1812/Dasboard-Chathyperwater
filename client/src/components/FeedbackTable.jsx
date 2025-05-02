@@ -125,11 +125,11 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {
       case 'up':
-        return 'bg-green-500/20 text-green-500';
+        return 'bg-sentiment-up/10 text-sentiment-up';
       case 'down':
-        return 'bg-red-500/20 text-red-500';
+        return 'bg-sentiment-down/10 text-sentiment-down';
       case 'comment':
-        return 'bg-yellow-500/20 text-yellow-500';
+        return 'bg-sentiment-comment/10 text-sentiment-comment';
       default:
         return 'bg-light-gray/10 text-light-gray';
     }
@@ -149,8 +149,8 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
     }
   };
 
-  // Helper function to get sentiment tooltip
-  const getSentimentTooltip = (sentiment) => {
+  // Helper function to get sentiment label
+  const getSentimentLabel = (sentiment) => {
     switch (sentiment) {
       case 'up':
         return 'Thumbs Up';
@@ -296,11 +296,9 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                     )}
                     <td className="px-4 py-3">{feedback.projectName}</td>
                     <td className="px-4 py-3">
-                      <span 
-                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${getSentimentColor(feedback.sentiment)}`}
-                        title={getSentimentTooltip(feedback.sentiment)}
-                      >
-                        <span className="text-lg">{getSentimentEmoji(feedback.sentiment)}</span>
+                      <span className={`inline-flex items-center px-2 py-1 rounded ${getSentimentColor(feedback.sentiment)}`}>
+                        <span className="mr-1 text-lg">{getSentimentEmoji(feedback.sentiment)}</span>
+                        <span>{getSentimentLabel(feedback.sentiment)}</span>
                       </span>
                     </td>
                     <td className="px-4 py-3 capitalize">{feedback.searchMethod}</td>
