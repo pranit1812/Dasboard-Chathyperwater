@@ -23,7 +23,8 @@ function App() {
     projectName: '',
     sentiment: '',
     searchMethod: '',
-    searchText: ''
+    searchText: '',
+    userType: ''
   });
 
   // Check for existing authentication in localStorage

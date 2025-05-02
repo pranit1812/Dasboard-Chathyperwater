@@ -90,6 +90,7 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
       'Comment', 
       'Answer', 
       'User Email',
+      'User Type',
       'Engineer Feedback'
     ].join(',');
     csvContent += headers + '\r\n';
@@ -104,6 +105,7 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
         `"${(item.commentText || '').replace(/"/g, '""')}"`,
         `"${(item.answer || '').replace(/"/g, '""')}"`,
         `"${item['user.email'] || ''}"`,
+        `"${item['user.type'] || ''}"`,
         `"${(engineerFeedback[item.id] || item.engineerFeedback || '').replace(/"/g, '""')}"`
       ].join(',');
       csvContent += row + '\r\n';
@@ -158,6 +160,28 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
         return 'Comment';
       default:
         return 'Unknown';
+    }
+  };
+
+  // Helper function to get user type label
+  const getUserTypeLabel = (type) => {
+    switch (type) {
+      case 'GC': return 'General Contractor';
+      case 'SUB': return 'Subcontractor';
+      case 'SUPP': return 'Supplier';
+      case 'NONE': return 'None';
+      default: return type || 'Unknown';
+    }
+  };
+
+  // Helper function to get user type color
+  const getUserTypeColor = (type) => {
+    switch (type) {
+      case 'GC': return 'bg-cyan/10 text-cyan';
+      case 'SUB': return 'bg-purple/10 text-purple';
+      case 'SUPP': return 'bg-green-500/10 text-green-500';
+      case 'NONE': return 'bg-light-gray/10 text-light-gray';
+      default: return 'bg-light-gray/10 text-light-gray';
     }
   };
 
@@ -237,6 +261,15 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                     <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                   )}
                 </th>
+                <th 
+                  className="px-4 py-3 text-left cursor-pointer hover:text-cyan"
+                  onClick={() => handleSort('user.type')}
+                >
+                  User Type
+                  {sortField === 'user.type' && (
+                    <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </th>
                 <th className="px-4 py-3 text-left">Query</th>
                 <th className="px-4 py-3 text-left">Comment</th>
                 <th className="px-4 py-3 text-left">Engineer Feedback</th>
@@ -269,6 +302,13 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                       </span>
                     </td>
                     <td className="px-4 py-3 capitalize">{feedback.searchMethod}</td>
+                    <td className="px-4 py-3">
+                      {feedback['user.type'] && (
+                        <span className={`inline-flex items-center px-2 py-1 rounded ${getUserTypeColor(feedback['user.type'])}`}>
+                          {getUserTypeLabel(feedback['user.type'])}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 truncate max-w-xs">{feedback.query}</td>
                     <td className="px-4 py-3 truncate max-w-xs">{feedback.commentText || '-'}</td>
                     <td className="px-4 py-3">
@@ -331,7 +371,7 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                   </tr>
                   {expandedRow === feedback.id && (
                     <tr className="bg-light-gray/5">
-                      <td colSpan={selectionMode ? 8 : 7} className="px-6 py-4">
+                      <td colSpan={selectionMode ? 9 : 8} className="px-6 py-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <h4 className="font-semibold mb-2 text-cyan">Query</h4>
@@ -345,7 +385,14 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                             <p className="text-sm whitespace-pre-wrap">{feedback.commentText || 'No comment provided'}</p>
                             
                             <h4 className="font-semibold mt-4 mb-2 text-cyan">User</h4>
-                            <p className="text-sm">{feedback['user.email']}</p>
+                            <div className="flex flex-col space-y-2">
+                              <p className="text-sm">Email: {feedback['user.email']}</p>
+                              <p className="text-sm">Type: 
+                                <span className={`ml-2 inline-flex items-center px-2 py-1 rounded text-sm ${getUserTypeColor(feedback['user.type'])}`}>
+                                  {getUserTypeLabel(feedback['user.type'])}
+                                </span>
+                              </p>
+                            </div>
                             
                             <h4 className="font-semibold mt-4 mb-2 text-cyan">Engineer Feedback</h4>
                             <div className="mt-2">

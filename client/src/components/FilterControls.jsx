@@ -5,15 +5,18 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
   const uniqueValues = useMemo(() => {
     const projectNames = new Set();
     const searchMethods = new Set();
+    const userTypes = new Set();
     
     feedbackData.forEach(item => {
       if (item.projectName) projectNames.add(item.projectName);
       if (item.searchMethod) searchMethods.add(item.searchMethod);
+      if (item['user.type']) userTypes.add(item['user.type']);
     });
     
     return {
       projectNames: Array.from(projectNames).sort(),
       searchMethods: Array.from(searchMethods).sort(),
+      userTypes: Array.from(userTypes).sort(),
     };
   }, [feedbackData]);
 
@@ -31,6 +34,18 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
     onFilterChange('sentiment', '');
     onFilterChange('searchMethod', '');
     onFilterChange('searchText', '');
+    onFilterChange('userType', '');
+  };
+  
+  // Get label for user type
+  const getUserTypeLabel = (type) => {
+    switch (type) {
+      case 'GC': return 'General Contractor';
+      case 'SUB': return 'Subcontractor';
+      case 'SUPP': return 'Supplier';
+      case 'NONE': return 'None';
+      default: return type;
+    }
   };
   
   return (
@@ -45,7 +60,7 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
         </button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Project Name Filter */}
         <div>
           <label 
@@ -128,6 +143,30 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
             {uniqueValues.searchMethods.map(method => (
               <option key={method} value={method}>
                 {method.charAt(0).toUpperCase() + method.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        {/* User Type Filter */}
+        <div>
+          <label 
+            htmlFor="userType" 
+            className="block text-sm font-medium text-light-gray/80 mb-1"
+          >
+            User Type
+          </label>
+          <select
+            id="userType"
+            name="userType"
+            value={filters.userType}
+            onChange={handleInputChange}
+            className="w-full rounded-md border-light-gray/20 bg-deep-navy text-light-gray p-2 focus:border-cyan focus:ring-1 focus:ring-cyan"
+          >
+            <option value="">All User Types</option>
+            {uniqueValues.userTypes.map(type => (
+              <option key={type} value={type}>
+                {getUserTypeLabel(type)}
               </option>
             ))}
           </select>

@@ -10,6 +10,7 @@ const initialData = [
     sentiment: 'up',
     'user.id': 'user-001',
     'user.email': 'user1@example.com',
+    'user.type': 'GC',
     searchMethod: 'local',
     commentText: 'Great response!',
     engineerFeedback: ''
@@ -22,6 +23,7 @@ const initialData = [
     sentiment: 'down',
     'user.id': 'user-002',
     'user.email': 'user2@example.com',
+    'user.type': 'SUB',
     searchMethod: 'api',
     commentText: 'This didn\'t solve my problem',
     engineerFeedback: ''
@@ -34,8 +36,22 @@ const initialData = [
     sentiment: 'comment',
     'user.id': 'user-003',
     'user.email': 'user3@example.com',
+    'user.type': 'SUPP',
     searchMethod: 'local',
     commentText: 'I need more details',
+    engineerFeedback: ''
+  },
+  {
+    id: 'resp-004',
+    projectName: 'Project Gamma',
+    query: 'What is the best practice for W?',
+    answer: 'The best practice for W is...',
+    sentiment: 'up',
+    'user.id': 'user-004',
+    'user.email': 'user4@example.com',
+    'user.type': 'NONE',
+    searchMethod: 'api',
+    commentText: 'Very helpful response',
     engineerFeedback: ''
   }
 ];
@@ -74,7 +90,7 @@ export const mockApi = {
     let filteredData = [...feedbackStore];
     
     // Apply filters
-    const { projectName, sentiment, searchMethod, searchText } = filters;
+    const { projectName, sentiment, searchMethod, searchText, userType } = filters;
     
     if (projectName) {
       filteredData = filteredData.filter(item => item.projectName === projectName);
@@ -86,6 +102,10 @@ export const mockApi = {
     
     if (searchMethod) {
       filteredData = filteredData.filter(item => item.searchMethod === searchMethod);
+    }
+
+    if (userType) {
+      filteredData = filteredData.filter(item => item['user.type'] === userType);
     }
     
     if (searchText) {
