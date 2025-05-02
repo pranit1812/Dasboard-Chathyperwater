@@ -3,23 +3,40 @@ import FeedbackTable from './components/FeedbackTable';
 import SentimentChart from './components/SentimentChart';
 import FilterControls from './components/FilterControls';
 import Layout from './components/Layout';
+import Login from './components/Login';
 import { mockApi } from './api/mockApi';
 import { realApi } from './api/realApi';
 
 // Choose which API to use - mockApi for local storage or realApi for DynamoDB
 const api = import.meta.env.PROD ? realApi : mockApi;
 
+// Get dashboard password from environment variable (default to 'admin' for development)
+const DASHBOARD_PASSWORD = import.meta.env.VITE_DASHBOARD_PASSWORD || 'admin';
+
 function App() {
   const [feedbackData, setFeedbackData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filters, setFilters] = useState({
     projectName: '',
     sentiment: '',
     searchMethod: '',
     searchText: ''
   });
+
+  // Check for existing authentication in localStorage
+  useEffect(() => {
+    try {
+      const auth = localStorage.getItem('dashboard-auth');
+      if (auth === 'true') {
+        setIsAuthenticated(true);
+      }
+    } catch (err) {
+      console.warn('Could not access localStorage:', err);
+    }
+  }, []);
 
   // Clear any existing localStorage data on first load for clean deployment
   useEffect(() => {
@@ -29,6 +46,30 @@ function App() {
       console.warn('Could not clear localStorage:', err);
     }
   }, []);
+
+  // Handle login attempt
+  const handleLogin = (password) => {
+    const isValid = password === DASHBOARD_PASSWORD;
+    if (isValid) {
+      setIsAuthenticated(true);
+      try {
+        localStorage.setItem('dashboard-auth', 'true');
+      } catch (err) {
+        console.warn('Could not set localStorage auth:', err);
+      }
+    }
+    return isValid;
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('dashboard-auth');
+    } catch (err) {
+      console.warn('Could not clear localStorage auth:', err);
+    }
+  };
 
   // Fetch feedback data
   const fetchData = async () => {
@@ -57,8 +98,10 @@ function App() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   // Apply filters to data
   useEffect(() => {
@@ -111,6 +154,11 @@ function App() {
     }
   };
 
+  // If not authenticated, show login screen
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   // Calculate counts for each sentiment
   const upCount = filteredData.filter(item => item.sentiment === 'up').length;
   const downCount = filteredData.filter(item => item.sentiment === 'down').length;
@@ -120,7 +168,15 @@ function App() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-cyan mb-6">Feedback Dashboard</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-cyan">Feedback Dashboard</h1>
+          <button 
+            onClick={handleLogout}
+            className="bg-red/80 hover:bg-red text-white px-4 py-2 rounded-md text-sm"
+          >
+            Logout
+          </button>
+        </div>
         
         {error && (
           <div className="bg-red/20 text-red p-4 rounded-md mb-6">

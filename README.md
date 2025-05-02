@@ -10,6 +10,7 @@ A modern dashboard application for visualizing user feedback data with filtering
 - Visualize sentiment distribution with a pie chart
 - Responsive design that works on desktop and mobile
 - DynamoDB integration for persistent data storage
+- Password protection for the dashboard using environment variables
 
 ## Technologies Used
 
@@ -34,7 +35,18 @@ A modern dashboard application for visualizing user feedback data with filtering
    ```
    npm run install:all
    ```
-3. Start the development server:
+3. Create a `.env` file in the client directory based on the `env.example` template:
+   ```
+   cd client
+   cp env.example .env
+   ```
+   
+   Edit the `.env` file to set your dashboard password:
+   ```
+   VITE_DASHBOARD_PASSWORD=your_secure_password_here
+   ```
+
+4. Start the development server:
    ```
    npm run dev
    ```
@@ -44,7 +56,7 @@ A modern dashboard application for visualizing user feedback data with filtering
    .\test-app.bat
    ```
 
-4. Open your browser to `http://localhost:5173`
+5. Open your browser to `http://localhost:5173` and enter the password to access the dashboard
 
 ## DynamoDB Setup
 
@@ -78,6 +90,15 @@ This script will:
 2. Clean previous build files
 3. Build the application
 4. Deploy to Vercel
+
+### Environment Variables
+
+When deploying to Vercel, make sure to set the following environment variables in your Vercel project:
+
+- `VITE_DASHBOARD_PASSWORD`: The password to access the dashboard
+- `AWS_REGION`: The AWS region where your DynamoDB table is located (e.g., 'us-east-1')
+- `AWS_ACCESS_KEY_ID`: Your AWS access key ID
+- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
 
 ### Manual Deployment
 
