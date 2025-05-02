@@ -1,9 +1,11 @@
 {
   "name": "feedback-dashboard",
   "version": "1.0.0",
-  "description": "A simple dashboard application for collecting and visualizing user feedback.",
+  "description": "A dashboard application for visualizing user feedback.",
   "main": "index.js",
   "scripts": {
+    "build": "cd client && npm install && npm run build",
+    "start": "cd client && npm run preview",
     "client": "cd client && npm run dev",
     "server": "cd server && node index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
