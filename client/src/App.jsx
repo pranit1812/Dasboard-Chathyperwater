@@ -232,26 +232,26 @@ function App() {
                     <div className="flex flex-col justify-center">
                       <h2 className="text-xl font-semibold text-cyan text-center mb-4">Sentiment Breakdown</h2>
                       <div className="flex flex-col space-y-4">
-                        <div className="flex items-center p-3 rounded bg-sentiment-up/10">
-                          <span className="text-2xl mr-3">😊</span>
+                        <div className="flex items-center p-3 rounded bg-green-500/10">
+                          <span className="text-2xl mr-3">👍</span>
                           <div>
-                            <div className="text-sentiment-up font-semibold">{upCount} Thumbs Up</div>
+                            <div className="text-green-500 font-semibold">{upCount} Thumbs Up</div>
                             <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((upCount / totalCount) * 100) : 0}% of total</div>
                           </div>
                         </div>
                         
-                        <div className="flex items-center p-3 rounded bg-sentiment-down/10">
-                          <span className="text-2xl mr-3">😞</span>
+                        <div className="flex items-center p-3 rounded bg-red-500/10">
+                          <span className="text-2xl mr-3">👎</span>
                           <div>
-                            <div className="text-sentiment-down font-semibold">{downCount} Thumbs Down</div>
+                            <div className="text-red-500 font-semibold">{downCount} Thumbs Down</div>
                             <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((downCount / totalCount) * 100) : 0}% of total</div>
                           </div>
                         </div>
                         
-                        <div className="flex items-center p-3 rounded bg-sentiment-comment/10">
-                          <span className="text-2xl mr-3">🤔</span>
+                        <div className="flex items-center p-3 rounded bg-yellow-500/10">
+                          <span className="text-2xl mr-3">💬</span>
                           <div>
-                            <div className="text-sentiment-comment font-semibold">{commentCount} Comment</div>
+                            <div className="text-yellow-500 font-semibold">{commentCount} Comment</div>
                             <div className="text-sm text-light-gray/70">{totalCount > 0 ? Math.round((commentCount / totalCount) * 100) : 0}% of total</div>
                           </div>
                         </div>

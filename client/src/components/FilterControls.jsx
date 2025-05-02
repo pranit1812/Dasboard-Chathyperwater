@@ -95,31 +95,34 @@ const FilterControls = ({ filters, onFilterChange, feedbackData }) => {
               onClick={() => handleSentimentChange('up')}
               className={`px-3 py-1 rounded-md text-sm ${
                 filters.sentiment === 'up'
-                  ? 'bg-sentiment-up text-white'
-                  : 'bg-sentiment-up/20 text-light-gray hover:bg-sentiment-up/30'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-green-500/20 text-light-gray hover:bg-green-500/30'
               }`}
+              title="Thumbs Up"
             >
-              👍 Up
+              👍
             </button>
             <button
               onClick={() => handleSentimentChange('down')}
               className={`px-3 py-1 rounded-md text-sm ${
                 filters.sentiment === 'down'
-                  ? 'bg-sentiment-down text-white'
-                  : 'bg-sentiment-down/20 text-light-gray hover:bg-sentiment-down/30'
+                  ? 'bg-red-500 text-white'
+                  : 'bg-red-500/20 text-light-gray hover:bg-red-500/30'
               }`}
+              title="Thumbs Down"
             >
-              👎 Down
+              👎
             </button>
             <button
               onClick={() => handleSentimentChange('comment')}
               className={`px-3 py-1 rounded-md text-sm ${
                 filters.sentiment === 'comment'
-                  ? 'bg-sentiment-comment text-deep-navy'
-                  : 'bg-sentiment-comment/20 text-light-gray hover:bg-sentiment-comment/30'
+                  ? 'bg-yellow-500 text-deep-navy'
+                  : 'bg-yellow-500/20 text-light-gray hover:bg-yellow-500/30'
               }`}
+              title="Comment"
             >
-              💬 Comment
+              💬
             </button>
           </div>
         </div>

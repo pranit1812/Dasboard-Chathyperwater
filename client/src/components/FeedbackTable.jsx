@@ -125,11 +125,11 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {
       case 'up':
-        return 'bg-sentiment-up/10 text-sentiment-up';
+        return 'bg-green-500/10 text-green-500';
       case 'down':
-        return 'bg-sentiment-down/10 text-sentiment-down';
+        return 'bg-red-500/10 text-red-500';
       case 'comment':
-        return 'bg-sentiment-comment/10 text-sentiment-comment';
+        return 'bg-yellow-500/10 text-yellow-500';
       default:
         return 'bg-light-gray/10 text-light-gray';
     }
@@ -139,17 +139,17 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
   const getSentimentEmoji = (sentiment) => {
     switch (sentiment) {
       case 'up':
-        return '😊';
+        return '👍';
       case 'down':
-        return '😞';
+        return '👎';
       case 'comment':
-        return '🤔';
+        return '💬';
       default:
         return '❓';
     }
   };
 
-  // Helper function to get sentiment label
+  // Helper function to get sentiment label (for screen readers and tooltips)
   const getSentimentLabel = (sentiment) => {
     switch (sentiment) {
       case 'up':
@@ -296,9 +296,11 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                     )}
                     <td className="px-4 py-3">{feedback.projectName}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2 py-1 rounded ${getSentimentColor(feedback.sentiment)}`}>
-                        <span className="mr-1 text-lg">{getSentimentEmoji(feedback.sentiment)}</span>
-                        <span>{getSentimentLabel(feedback.sentiment)}</span>
+                      <span 
+                        className={`inline-flex items-center justify-center rounded-full w-8 h-8 ${getSentimentColor(feedback.sentiment)}`}
+                        title={getSentimentLabel(feedback.sentiment)}
+                      >
+                        <span className="text-lg">{getSentimentEmoji(feedback.sentiment)}</span>
                       </span>
                     </td>
                     <td className="px-4 py-3 capitalize">{feedback.searchMethod}</td>
