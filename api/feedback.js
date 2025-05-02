@@ -22,6 +22,11 @@ module.exports = async (req, res) => {
   }
   
   try {
+    // Log request details for debugging
+    console.log('Request URL:', req.url);
+    console.log('Request method:', req.method);
+    console.log('Request path:', req.url.split('/'));
+    
     // GET request - retrieve feedback with optional filters
     if (req.method === 'GET') {
       const { projectName, sentiment, searchMethod, searchText } = req.query;
@@ -91,7 +96,11 @@ module.exports = async (req, res) => {
 
     // DELETE request - delete feedback
     if (req.method === 'DELETE') {
-      const id = req.url.split('/').pop();
+      // Extract ID from URL path
+      const pathParts = req.url.split('/');
+      const id = pathParts[pathParts.length - 1];
+      
+      console.log('DELETE ID:', id);
       
       if (!id) {
         return res.status(400).json({
@@ -112,8 +121,12 @@ module.exports = async (req, res) => {
 
     // PATCH request - update feedback
     if (req.method === 'PATCH') {
-      const id = req.url.split('/').pop();
-      const updates = req.body;
+      // Extract ID from URL path
+      const pathParts = req.url.split('/');
+      const id = pathParts[pathParts.length - 1];
+      
+      console.log('PATCH ID:', id);
+      console.log('PATCH Body:', req.body);
       
       if (!id) {
         return res.status(400).json({
@@ -126,7 +139,7 @@ module.exports = async (req, res) => {
       let expressionAttributeNames = {};
       let expressionAttributeValues = {};
       
-      for (const [key, value] of Object.entries(updates)) {
+      for (const [key, value] of Object.entries(req.body)) {
         updateExpression += ` #${key} = :${key},`;
         expressionAttributeNames[`#${key}`] = key;
         expressionAttributeValues[`:${key}`] = value;
@@ -134,6 +147,10 @@ module.exports = async (req, res) => {
       
       // Remove trailing comma
       updateExpression = updateExpression.slice(0, -1);
+      
+      console.log('Update Expression:', updateExpression);
+      console.log('Expression Names:', expressionAttributeNames);
+      console.log('Expression Values:', expressionAttributeValues);
       
       // Update in DynamoDB
       const params = {
@@ -145,7 +162,8 @@ module.exports = async (req, res) => {
         ReturnValues: 'UPDATED_NEW'
       };
       
-      await dynamoDB.update(params).promise();
+      const result = await dynamoDB.update(params).promise();
+      console.log('Update result:', result);
       
       return res.status(200).json({ success: true });
     }
@@ -155,6 +173,6 @@ module.exports = async (req, res) => {
     
   } catch (error) {
     console.error('API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }; 
