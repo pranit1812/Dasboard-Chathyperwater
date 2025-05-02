@@ -353,9 +353,16 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                       <div className="flex justify-center space-x-2">
                         <button 
                           onClick={() => toggleRowExpansion(feedback.id)}
-                          className="text-cyan hover:text-purple"
+                          className="text-cyan hover:text-purple w-8 h-8 rounded-full border border-cyan flex items-center justify-center"
+                          title={expandedRow === feedback.id ? "Hide details" : "Show details"}
                         >
-                          {expandedRow === feedback.id ? 'Hide' : 'Details'}
+                          {expandedRow === feedback.id ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                            </svg>
+                          ) : (
+                            <span className="font-semibold">i</span>
+                          )}
                         </button>
                         <button 
                           onClick={() => onDelete(feedback.id)}
