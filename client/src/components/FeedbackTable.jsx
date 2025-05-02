@@ -95,6 +95,7 @@ const FeedbackTable = ({ data }) => {
                 )}
               </th>
               <th className="px-4 py-3 text-left">Query</th>
+              <th className="px-4 py-3 text-left">Comment</th>
               <th className="px-4 py-3 text-center">Actions</th>
             </tr>
           </thead>
@@ -114,6 +115,7 @@ const FeedbackTable = ({ data }) => {
                   </td>
                   <td className="px-4 py-3 capitalize">{feedback.searchMethod}</td>
                   <td className="px-4 py-3 truncate max-w-xs">{feedback.query}</td>
+                  <td className="px-4 py-3 truncate max-w-xs">{feedback.commentText || '-'}</td>
                   <td className="px-4 py-3 text-center">
                     <button 
                       onClick={() => toggleRowExpansion(feedback.id)}
@@ -125,7 +127,7 @@ const FeedbackTable = ({ data }) => {
                 </tr>
                 {expandedRow === feedback.id && (
                   <tr className="bg-light-gray/5">
-                    <td colSpan={5} className="px-6 py-4">
+                    <td colSpan={6} className="px-6 py-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <h4 className="font-semibold mb-2 text-cyan">Query</h4>
