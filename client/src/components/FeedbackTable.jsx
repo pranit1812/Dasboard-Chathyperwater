@@ -280,12 +280,14 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                             className="w-full h-24 bg-deep-navy border border-light-gray/30 rounded p-2 text-light-gray focus:border-cyan focus:ring-1 focus:ring-cyan"
                             placeholder="Add detailed feedback..."
                           />
-                          <button 
-                            onClick={stopEditingFeedback}
-                            className="absolute top-1 right-1 text-cyan hover:text-purple bg-deep-navy/80 rounded p-1"
-                          >
-                            Done
-                          </button>
+                          <div className="flex justify-end mt-2">
+                            <button 
+                              onClick={stopEditingFeedback}
+                              className="px-3 py-1 bg-cyan hover:bg-purple text-deep-navy font-medium rounded"
+                            >
+                              Done
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         engineerFeedback[feedback.id] || feedback.engineerFeedback ? (
@@ -348,12 +350,22 @@ const FeedbackTable = ({ data, onDelete, onUpdateEngineerFeedback }) => {
                             <h4 className="font-semibold mt-4 mb-2 text-cyan">Engineer Feedback</h4>
                             <div className="mt-2">
                               {editingFeedback === feedback.id ? (
-                                <textarea
-                                  value={engineerFeedback[feedback.id] || feedback.engineerFeedback || ''}
-                                  onChange={(e) => handleEngineerFeedbackChange(feedback.id, e.target.value)}
-                                  className="w-full h-24 bg-deep-navy border border-light-gray/30 rounded p-2 text-light-gray focus:border-cyan focus:ring-1 focus:ring-cyan"
-                                  placeholder="Add detailed feedback..."
-                                />
+                                <div className="relative">
+                                  <textarea
+                                    value={engineerFeedback[feedback.id] || feedback.engineerFeedback || ''}
+                                    onChange={(e) => handleEngineerFeedbackChange(feedback.id, e.target.value)}
+                                    className="w-full h-24 bg-deep-navy border border-light-gray/30 rounded p-2 text-light-gray focus:border-cyan focus:ring-1 focus:ring-cyan"
+                                    placeholder="Add detailed feedback..."
+                                  />
+                                  <div className="flex justify-end mt-2">
+                                    <button 
+                                      onClick={stopEditingFeedback}
+                                      className="px-3 py-1 bg-cyan hover:bg-purple text-deep-navy font-medium rounded"
+                                    >
+                                      Done
+                                    </button>
+                                  </div>
+                                </div>
                               ) : (
                                 <div className="flex space-x-2">
                                   <p className="text-sm whitespace-pre-wrap flex-grow">
